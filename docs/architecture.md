@@ -9,43 +9,43 @@ flowchart TD
     subgraph GitHub ["GitHub Repository (docs-repo)"]
         Markdown["Markdown Sources"]
         GHA["GitHub Actions Workflow"]
-        Markdown -->|Push to main| GHA
+        Markdown -->|"Push to main"| GHA
     end
 
     subgraph GCP ["Google Cloud Platform"]
         subgraph Security ["Identity & Access Control"]
             WIF["Workload Identity Federation"]
             IAP["Identity-Aware Proxy (IAP)"]
-            GoogleGroup["Allowed Google Workspace Group"]
-            IAP --- GoogleGroup
+            UserAuth["Allowed Google Accounts"]
+            IAP --- UserAuth
         end
 
         subgraph Storage ["Storage Layer"]
-            GCS["GCS Bucket (gs://<bucket_name>)"]
+            GCS["GCS Bucket"]
         end
 
         subgraph Networking ["Network Layer"]
             User(("User Browser"))
             HTTPSLB["Global External HTTPS Load Balancer"]
             NEG["Serverless NEG"]
-            User -->|HTTPS Request| HTTPSLB
-            HTTPSLB -->|Authentication| IAP
-            IAP -->|Authorized| NEG
+            User -->|"HTTPS Request"| HTTPSLB
+            HTTPSLB -->|"Authentication"| IAP
+            IAP -->|"Authorized"| NEG
         end
 
         subgraph Compute ["Compute Layer"]
             CloudRun["Cloud Run Service (Nginx)"]
             NEG --> CloudRun
-            CloudRun -->|GCS Volume Mount (gcsfuse)| GCS
+            CloudRun -->|"GCS Volume Mount"| GCS
         end
 
         subgraph Registry ["Container Registry"]
             AR["Artifact Registry"]
-            AR -->|Nginx Container Image| CloudRun
+            AR -->|"Container Image"| CloudRun
         end
     end
 
-    GHA -->|WIF Auth & gcloud storage rsync| GCS
+    GHA -->|"WIF Auth & gcloud storage rsync"| GCS
 ```
 
 ---
