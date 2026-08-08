@@ -1,35 +1,41 @@
-// Mermaid ダイアグラムのクリック全画面拡大機能
-document.addEventListener("DOMContentLoaded", function () {
-  function initMermaidZoom() {
-    document.querySelectorAll(".mermaid").forEach(function (el) {
-      el.addEventListener("click", function () {
-        const svg = el.querySelector("svg");
-        if (!svg) return;
+// Mermaid ダイアグラムのクリック全画面拡大機能 (イベントデリゲーション方式)
+(function () {
+  document.addEventListener("click", function (e) {
+    // 既存モーダルの削除処理
+    const existingOverlay = document.querySelector(".mermaid-modal-overlay");
+    if (existingOverlay) {
+      existingOverlay.remove();
+      return;
+    }
 
-        // モーダル背景の生成
-        const overlay = document.createElement("div");
-        overlay.className = "mermaid-modal-overlay";
+    // .mermaid 要素またはその内部要素 (SVG/path/text/g 等) がクリックされたか判定
+    const mermaidEl = e.target.closest(".mermaid");
+    if (!mermaidEl) return;
 
-        // SVG のクローンを作成して高画質表示
-        const svgClone = svg.cloneNode(true);
-        svgClone.removeAttribute("style");
-        overlay.appendChild(svgClone);
+    const svg = mermaidEl.querySelector("svg");
+    if (!svg) return;
 
-        // クリックで閉じる
-        overlay.addEventListener("click", function () {
-          document.body.removeChild(overlay);
-        });
+    // モーダル背景の生成
+    const overlay = document.createElement("div");
+    overlay.className = "mermaid-modal-overlay";
 
-        document.body.appendChild(overlay);
-      });
+    // SVG クローンの作成
+    const svgClone = svg.cloneNode(true);
+    svgClone.removeAttribute("style");
+    svgClone.removeAttribute("width");
+    svgClone.removeAttribute("height");
+    svgClone.style.maxWidth = "95vw";
+    svgClone.style.maxHeight = "95vh";
+    svgClone.style.width = "auto";
+    svgClone.style.height = "auto";
+
+    overlay.appendChild(svgClone);
+
+    // クリックで閉じる
+    overlay.addEventListener("click", function () {
+      overlay.remove();
     });
-  }
 
-  // MkDocs のページ遷移に対応
-  initMermaidZoom();
-  if (typeof location$ !== "undefined") {
-    location$.subscribe(function () {
-      setTimeout(initMermaidZoom, 500);
-    });
-  }
-});
+    document.body.appendChild(overlay);
+  });
+})();
