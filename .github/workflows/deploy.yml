@@ -39,11 +39,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Lint Documentation
-        run: |
-          npx -y markdownlint-cli2 "docs/**/*.md" || true
-
-      - name: Build MkDocs Site (Strict Mode)
+      - name: Build and Lint MkDocs Site (Strict Mode)
         run: |
           mkdocs build --strict
 

@@ -6,7 +6,7 @@ GitHub に Markdown を Push すると、Google Cloud Platform (GCP) 上の GCS 
 
 ## 🏛️ アーキテクチャ
 
-詳細なシステムアーキテクチャについては [`ARCHITECTURE.md`](ARCHITECTURE.md) を参照してください。
+詳細なシステムアーキテクチャについては [`詳細システム設計仕様`](architecture_spec.md) を参照してください。
 
 ```text
 [User] -> [HTTPS Load Balancer] -> [IAP 認証 (Google Group 限定)]
