@@ -5,47 +5,47 @@
 ## 全体構成図
 
 ```mermaid
-flowchart TD
-    subgraph GitHub ["GitHub Repository (docs-repo)"]
+graph TD
+    subgraph GitHub["GitHub Repository"]
         Markdown["Markdown Sources"]
-        GHA["GitHub Actions Workflow"]
-        Markdown -->|"Push to main"| GHA
+        GHA["GitHub Actions"]
+        Markdown --> GHA
     end
 
-    subgraph GCP ["Google Cloud Platform"]
-        subgraph Security ["Identity & Access Control"]
+    subgraph GCP["Google Cloud Platform"]
+        subgraph Security["Identity and Access Control"]
             WIF["Workload Identity Federation"]
-            IAP["Identity-Aware Proxy (IAP)"]
+            IAP["Identity-Aware Proxy"]
             UserAuth["Allowed Google Accounts"]
-            IAP --- UserAuth
+            IAP --> UserAuth
         end
 
-        subgraph Storage ["Storage Layer"]
+        subgraph Storage["Storage Layer"]
             GCS["GCS Bucket"]
         end
 
-        subgraph Networking ["Network Layer"]
+        subgraph Networking["Network Layer"]
             User(("User Browser"))
-            HTTPSLB["Global External HTTPS Load Balancer"]
+            HTTPSLB["HTTPS Load Balancer"]
             NEG["Serverless NEG"]
-            User -->|"HTTPS Request"| HTTPSLB
-            HTTPSLB -->|"Authentication"| IAP
-            IAP -->|"Authorized"| NEG
+            User --> HTTPSLB
+            HTTPSLB --> IAP
+            IAP --> NEG
         end
 
-        subgraph Compute ["Compute Layer"]
-            CloudRun["Cloud Run Service (Nginx)"]
+        subgraph Compute["Compute Layer"]
+            CloudRun["Cloud Run Service"]
             NEG --> CloudRun
-            CloudRun -->|"GCS Volume Mount"| GCS
+            CloudRun --> GCS
         end
 
-        subgraph Registry ["Container Registry"]
+        subgraph Registry["Container Registry"]
             AR["Artifact Registry"]
-            AR -->|"Container Image"| CloudRun
+            AR --> CloudRun
         end
     end
 
-    GHA -->|"WIF Auth & gcloud storage rsync"| GCS
+    GHA --> GCS
 ```
 
 ---

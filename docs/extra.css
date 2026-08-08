@@ -1,12 +1,15 @@
-/* Mermaid ダイアグラムの表示サイズ改善と横スクロール対応 */
-.mermaid {
+/* Mermaid ダイアグラムの基本スタイル */
+.mermaid,
+div.mermaid,
+pre.mermaid {
   text-align: center;
   overflow-x: auto;
   padding: 1.5rem 1rem;
   background: var(--md-code-bg-color, #f8f9fa);
   border-radius: 8px;
-  cursor: zoom-in;
+  cursor: zoom-in !important;
   margin: 1.5em 0;
+  transition: all 0.2s ease-in-out;
 }
 
 .mermaid svg {
@@ -15,32 +18,38 @@
   min-width: 650px;
 }
 
-/* ダイアグラムモーダル拡大用スタイル */
-.mermaid-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.88);
+/* クリック全画面ズーム (見やすい上品なライトテーマモーダル) */
+.mermaid.is-zoomed,
+div.mermaid.is-zoomed,
+pre.mermaid.is-zoomed {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(248, 249, 252, 0.96) !important; /* 明るく見やすい背景 */
+  backdrop-filter: blur(10px) !important; /* 背景ぼかし効果 */
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   z-index: 999999 !important;
-  cursor: zoom-out;
-  padding: 20px;
-  box-sizing: border-box;
+  cursor: zoom-out !important;
+  margin: 0 !important;
+  padding: 32px !important;
+  box-sizing: border-box !important;
+  border-radius: 0 !important;
 }
 
-.mermaid-modal-overlay svg {
-  max-width: 95vw !important;
-  max-height: 95vh !important;
+.mermaid.is-zoomed svg {
+  max-width: 92vw !important;
+  max-height: 92vh !important;
   width: auto !important;
   height: auto !important;
   background: #ffffff !important;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+  padding: 32px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
