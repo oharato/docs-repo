@@ -67,3 +67,7 @@ extra_javascript:
 nav:
   - ホーム: index.md
   - アーキテクチャ概要: architecture.md
+  - システム仕様・運用:
+      - プロジェクト概要・セットアップ: system/getting_started.md
+      - 詳細システム設計仕様: system/architecture_spec.md
+      - コードレビュー結果: system/code_review.md
