@@ -70,3 +70,11 @@ nav:
       - プロジェクト概要・セットアップ: system/getting_started.md
       - 詳細システム設計仕様: system/architecture_spec.md
       - コードレビュー結果: system/code_review.md
+  - 技術ナレッジ (Knowledge):
+      - 2026年08月:
+          - Better Auth + Cloudflare + Hono ガイド: knowledge/2026-08/2026-08-05_better_auth_cloudflare_hono_guide.md
+          - Linux CLI エディタ比較 & Fresh ガイド: knowledge/2026-08/2026-08-05_linux_cli_editors_with_filetree.md
+          - 社内ドキュメント共有手法・アーキテクチャ調査: knowledge/2026-08/2026-08-05_modern_internal_doc_sharing_methods.md
+          - OpenJDK Project Valhalla 概要解説: knowledge/2026-08/2026-08-05_project_valhalla_overview.md
+          - Spring Boot 高速化 & Java フレームワーク: knowledge/2026-08/2026-08-05_spring_boot_speedup_and_fast_java_frameworks.md
+          - TOPIXリバランス空売り戦略の検証: knowledge/2026-08/2026-08-08_topix_rebalance_short_selling_strategy.md
