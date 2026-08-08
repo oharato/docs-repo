@@ -47,7 +47,8 @@ graph TD
         end
     end
 
-    GHA --> GCS
+    GHA --> WIF
+    WIF --> GCS
 ```
 
 ---

@@ -24,18 +24,18 @@
 
 ```mermaid
 graph TD
-    A[開発者: Git Push] --> B[GitHub / GitLab]
-    B --> C1[構成案A: Cloudflare Pages + Zero Trust]
-    B --> C2[構成案B: Wiki.js / Outline (Git Storage)]
-    B --> C3[構成案C: GitLab/GitHub Enterprise Pages]
-    B --> C4[構成案D: Spotify Backstage TechDocs]
+    A["開発者: Git Push"] --> B["GitHub / GitLab"]
+    B --> C1["構成案A: Cloudflare Pages + Zero Trust"]
+    B --> C2["構成案B: Wiki.js / Outline (Git Storage)"]
+    B --> C3["構成案C: GitLab / GitHub Enterprise Pages"]
+    B --> C4["構成案D: Spotify Backstage TechDocs"]
 
-    C1 --> D[社内SSO / 権限管理 / IP制限]
+    C1 --> D["社内SSO / 権限管理 / IP制限"]
     C2 --> D
     C3 --> D
     C4 --> D
 
-    D --> E[開発者 & 非開発者の閲覧]
+    D --> E["開発者 & 非開発者の閲覧"]
 ```
 
 ### アーキテクチャ比較表
