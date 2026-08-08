@@ -70,6 +70,7 @@ nav:
       - プロジェクト概要・セットアップ: system/getting_started.md
       - 詳細システム設計仕様: system/architecture_spec.md
       - コードレビュー結果: system/code_review.md
+      - ハマりポイント・設定ノウハウ集: system/pitfalls_and_tips.md
   - 技術ナレッジ (Knowledge):
       - 2026年08月:
           - Better Auth + Cloudflare + Hono ガイド: knowledge/2026-08/2026-08-05_better_auth_cloudflare_hono_guide.md
