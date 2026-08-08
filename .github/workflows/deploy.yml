@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4 # Latest v4.x
+        with:
+          fetch-depth: 1
 
       - name: Authenticate to Google Cloud via WIF
         uses: google-github-actions/auth@v2 # Latest v2.x
@@ -32,6 +34,7 @@ jobs:
         uses: actions/setup-python@v5 # Latest v5.x
         with:
           python-version: '3.12'
+          cache: 'pip'
 
       - name: Install Dependencies
         run: |
