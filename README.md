@@ -56,4 +56,4 @@ mkdocs serve
 
 - `main` ブランチへのコミット Push 時にワークフローが自動トリガーされます。
 - GitHub サービス認証は **Workload Identity Federation (WIF)** を利用し、短時間有効な OIDC アクセストークンを自動取得します（サービスアカウントキー JSON の発行は不要）。
-- `mkdocs build` により生成された `site/` ディレクトリ配下のファイル群を、`gcloud storage rsync -r -d` コマンドで GCS バケットへ差分同期します。
+- `mkdocs build` により生成された `site/` ディレクトリ配下のファイル群を、`gcloud storage rsync --recursive --delete-unmatched-destination-objects` コマンドで GCS バケットへ差分同期します。
