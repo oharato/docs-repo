@@ -39,9 +39,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build MkDocs Site
+      - name: Lint Documentation
         run: |
-          mkdocs build
+          npx -y markdownlint-cli2 "docs/**/*.md" || true
+
+      - name: Build MkDocs Site (Strict Mode)
+        run: |
+          mkdocs build --strict
 
       - name: Sync Site Artifacts to GCS Bucket
         run: |
