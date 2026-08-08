@@ -21,7 +21,12 @@
 .mermaid svg {
   max-width: 100%;
   height: auto;
-  min-width: 650px;
+}
+
+@media (min-width: 768px) {
+  .mermaid svg {
+    min-width: 650px;
+  }
 }
 
 /* Fullscreen Zoom Modal (Light Glassmorphism Theme) */
@@ -54,4 +59,13 @@
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-md-color-scheme="slate"] .mermaid.is-zoomed {
+  background-color: rgba(30, 30, 40, 0.95);
+}
+
+[data-md-color-scheme="slate"] .mermaid.is-zoomed svg {
+  background-color: #2d2d3d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

@@ -13,7 +13,9 @@ docs-repo/
 │       └── deploy.yml          # WIF 認証による GCS 同期 CI/CD ワークフロー
 ├── docs/                        # Markdownドキュメント群
 │   ├── index.md                # メインページ
-│   └── architecture.md         # システム構成解説
+│   ├── architecture.md         # システム構成解説
+│   ├── extra.css               # カスタムスタイル
+│   └── extra.js                # カスタムスクリプト
 ├── mkdocs.yml                  # MkDocs (Material theme) 設定
 └── README.md                   # 本ドキュメント
 ```
@@ -23,11 +25,11 @@ docs-repo/
 ## 💻 開発・ローカルプレビュー手順
 
 ### 1. 前提条件
-Python 3.8 以上がインストールされていることを確認します。
+Python 3.10 以上がインストールされていることを確認します。
 
 ### 2. パッケージのインストール
 ```bash
-pip install mkdocs-material
+pip install -r requirements.txt
 ```
 
 ### 3. ローカルサーバーの起動

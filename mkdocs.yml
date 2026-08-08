@@ -12,14 +12,14 @@ theme:
       accent: indigo
       toggle:
         icon: material/brightness-7
-        name: Switch to dark mode
+        name: ダークモードに切り替え
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-4
-        name: Switch to light mode
+        name: ライトモードに切り替え
   features:
     - navigation.instant
     - navigation.tracking
@@ -62,7 +62,6 @@ extra_css:
   - extra.css
 
 extra_javascript:
-  - https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js
   - extra.js
 
 nav:
