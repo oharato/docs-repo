@@ -1,55 +1,57 @@
-/* Mermaid ダイアグラムの基本スタイル */
-.mermaid,
-div.mermaid,
-pre.mermaid {
+/* ==========================================================================
+   Mermaid Diagram Enhancements & Zoom View
+   ========================================================================== */
+
+/* Mermaid Container Base Style */
+.mermaid {
   text-align: center;
   overflow-x: auto;
   padding: 1.5rem 1rem;
-  background: var(--md-code-bg-color, #f8f9fa);
+  background-color: var(--md-code-bg-color, #f8f9fa);
   border-radius: 8px;
-  cursor: zoom-in !important;
+  cursor: zoom-in;
   margin: 1.5em 0;
-  transition: all 0.2s ease-in-out;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.mermaid:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .mermaid svg {
-  max-width: 100% !important;
-  height: auto !important;
+  max-width: 100%;
+  height: auto;
   min-width: 650px;
 }
 
-/* クリック全画面ズーム (見やすい上品なライトテーマモーダル) */
-.mermaid.is-zoomed,
-div.mermaid.is-zoomed,
-pre.mermaid.is-zoomed {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background: rgba(248, 249, 252, 0.96) !important; /* 明るく見やすい背景 */
-  backdrop-filter: blur(10px) !important; /* 背景ぼかし効果 */
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  z-index: 999999 !important;
-  cursor: zoom-out !important;
-  margin: 0 !important;
-  padding: 32px !important;
-  box-sizing: border-box !important;
-  border-radius: 0 !important;
+/* Fullscreen Zoom Modal (Light Glassmorphism Theme) */
+.mermaid.is-zoomed {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(248, 249, 252, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: zoom-out;
+  margin: 0;
+  padding: 2rem;
+  box-sizing: border-box;
+  border-radius: 0;
 }
 
 .mermaid.is-zoomed svg {
-  max-width: 92vw !important;
-  max-height: 92vh !important;
-  width: auto !important;
-  height: auto !important;
-  background: #ffffff !important;
-  padding: 32px !important;
-  border-radius: 16px !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  max-width: 92vw;
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
