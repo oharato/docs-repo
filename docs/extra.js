@@ -1,25 +1,37 @@
-// Mermaid ダイアグラムのクリック全画面拡大機能 (イベントデリゲーション方式)
-(function () {
+// Material for MkDocs の Mermaid 公式初期化 & 全画面拡大モーダル
+document.addEventListener("DOMContentLoaded", function () {
+  if (typeof mermaid !== "undefined") {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "default",
+    });
+  }
+
+  // ドキュメント全体でのクリックイベント検知
   document.addEventListener("click", function (e) {
-    // 既存モーダルの削除処理
     const existingOverlay = document.querySelector(".mermaid-modal-overlay");
     if (existingOverlay) {
       existingOverlay.remove();
       return;
     }
 
-    // .mermaid 要素またはその内部要素 (SVG/path/text/g 等) がクリックされたか判定
-    const mermaidEl = e.target.closest(".mermaid");
-    if (!mermaidEl) return;
+    // クリック要素または親要素から SVG を検索
+    const target = e.target;
+    let svg = target.closest("svg");
 
-    const svg = mermaidEl.querySelector("svg");
+    if (!svg) {
+      const container = target.closest(".mermaid, pre.mermaid, div.mermaid");
+      if (container) {
+        svg = container.querySelector("svg");
+      }
+    }
+
     if (!svg) return;
 
-    // モーダル背景の生成
+    // 全画面モーダルの構築
     const overlay = document.createElement("div");
     overlay.className = "mermaid-modal-overlay";
 
-    // SVG クローンの作成
     const svgClone = svg.cloneNode(true);
     svgClone.removeAttribute("style");
     svgClone.removeAttribute("width");
@@ -31,11 +43,10 @@
 
     overlay.appendChild(svgClone);
 
-    // クリックで閉じる
     overlay.addEventListener("click", function () {
       overlay.remove();
     });
 
     document.body.appendChild(overlay);
   });
-})();
+});
