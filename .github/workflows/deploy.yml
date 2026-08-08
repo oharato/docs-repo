@@ -45,4 +45,4 @@ jobs:
 
       - name: Sync Site Artifacts to GCS Bucket
         run: |
-          gcloud storage rsync site/ gs://${{ secrets.GCS_BUCKET }} --recursive --delete-unmatched-destination-objects --gzip-in-flight
+          gcloud storage rsync site/ gs://${{ secrets.GCS_BUCKET }} --recursive --delete-unmatched-destination-objects --gzip-in-flight-all
