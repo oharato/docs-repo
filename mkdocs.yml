@@ -52,6 +52,12 @@ markdown_extensions:
   - toc:
       permalink: true
 
+extra_css:
+  - extra.css
+
+extra_javascript:
+  - extra.js
+
 nav:
   - ホーム: index.md
   - アーキテクチャ概要: architecture.md
