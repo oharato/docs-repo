@@ -78,6 +78,7 @@ nav:
           - 分析ダッシュボード概要: html/analytics/dashboard.html
   - 技術ナレッジ (Knowledge):
       - 2026年08月:
+          - GCP WIF & IAP 最小権限設定ガイド: knowledge/2026-08/2026-08-09_gcp_wif_iap_least_privilege_guide.md
           - Mermaid ダイアグラム自動検証・リンターガイド: knowledge/2026-08/2026-08-09_mermaid_linter_and_validation_guide.md
           - Better Auth + Cloudflare + Hono ガイド: knowledge/2026-08/2026-08-05_better_auth_cloudflare_hono_guide.md
           - Linux CLI エディタ比較 & Fresh ガイド: knowledge/2026-08/2026-08-05_linux_cli_editors_with_filetree.md

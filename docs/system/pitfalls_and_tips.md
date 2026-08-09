@@ -25,22 +25,20 @@
   2. **Cloud Run の IAM 制限**: `member = "allUsers"` への `roles/run.invoker` 権限を削除し、IAP システムサービスアカウント (`service-<project_number>@gcp-sa-iap.iam.gserviceaccount.com`) のみに限定してアクセスをバインド。
 
 ### 1.3 Workload Identity Federation (WIF) の最小権限原則
-- **事象**: CI/CD 用サービスアカウントに `roles/owner` や `roles/editor` などの広範な特権をバインドすると、リポジトリ侵害時に重大なセキュリティリスクとなる。
-- **対策**: `roles/owner` / `editor` を完全に削除し、インフラ更新に必要な 8 つの権限のみに特定・制限。
+- **事象**: CI/CD 用サービスアカウントに `roles/owner` や `role### 1.3 Workload Identity Federation (WIF) SA の最小権限化 (Least Privilege)
+- **事象**: CI/CD 用 Service Account に `roles/owner` や `roles/editor` などの広範な特権をバインドすると、リポジトリ侵害時に重大なセキュリティリスクとなる。
+- **対策**: `roles/owner` / `editor` を完全に削除し、インフラ更新に必要な 9 つの最小権限のみに特定・制限。
   ```hcl
   for_each = toset([
-    "roles/editor",
     "roles/iam.workloadIdentityPoolAdmin",
     "roles/resourcemanager.projectIamAdmin",
     "roles/run.admin",
     "roles/compute.admin",
-    "roles/compute.securityAdmin",
     "roles/storage.admin",
     "roles/artifactregistry.admin",
     "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountUser",
     "roles/iap.admin",
-    "roles/iap.webServiceAdmin",
   ])
   ```
 
