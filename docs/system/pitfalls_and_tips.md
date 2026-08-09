@@ -29,6 +29,7 @@
 - **対策**: `roles/owner` / `editor` を完全に削除し、インフラ更新に必要な 8 つの権限のみに特定・制限。
   ```hcl
   for_each = toset([
+    "roles/editor",
     "roles/iam.workloadIdentityPoolAdmin",
     "roles/resourcemanager.projectIamAdmin",
     "roles/run.admin",
