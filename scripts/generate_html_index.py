@@ -4,7 +4,6 @@ import re
 from pathlib import Path
 
 HTML_DIR = Path("docs/html")
-INDEX_FILE = HTML_DIR / "index.md"
 MKDOCS_YML = Path("mkdocs.yml")
 
 def extract_title(html_path: Path) -> str:
@@ -36,7 +35,6 @@ def build_tree_structure(html_files):
                 current[part] = {"_files": []}
             current = current[part]
         
-        # 最深部のファイル
         title = extract_title(html_file)
         full_rel_path = html_file.relative_to(Path("docs"))
         current["_files"].append((title, str(full_rel_path)))
@@ -63,7 +61,7 @@ def render_tree_to_yaml(tree, indent_level=2):
     return lines
 
 def update_mkdocs_nav(html_files):
-    """mkdocs.yml 内の HTML セクションをサブディレクトリ階層化ツリー形式で動的更新"""
+    """mkdocs.yml 内の HTML セクションを直接 HTML ファイルのみの木構造形式で動的更新"""
     if not MKDOCS_YML.exists():
         return
 
@@ -71,13 +69,13 @@ def update_mkdocs_nav(html_files):
     
     tree = build_tree_structure(html_files)
     
-    nav_lines = [
-        "  - HTMLコンテンツ (Raw HTML):",
-        "      - 目次インデックス: html/index.md"
-    ]
+    nav_lines = ["  - HTMLコンテンツ (Raw HTML):"]
     
     yaml_tree_lines = render_tree_to_yaml(tree, indent_level=6)
-    nav_lines.extend(yaml_tree_lines)
+    if yaml_tree_lines:
+        nav_lines.extend(yaml_tree_lines)
+    else:
+        nav_lines.append("      - (なし): index.md")
 
     new_section = "\n".join(nav_lines)
 
@@ -86,32 +84,20 @@ def update_mkdocs_nav(html_files):
     if re.search(pattern, content, re.DOTALL):
         updated_content = re.sub(pattern, new_section, content, flags=re.DOTALL)
         MKDOCS_YML.write_text(updated_content, encoding="utf-8")
-        print("✅ mkdocs.yml の左ナビゲーションツリーを階層化更新しました。")
+        print("✅ mkdocs.yml の左ナビゲーションツリー（純粋HTMLのみ）を更新しました。")
 
 def main():
     if not HTML_DIR.exists():
         print(f"Directory {HTML_DIR} does not exist. Creating...")
         HTML_DIR.mkdir(parents=True, exist_ok=True)
 
+    # index.md ファイルが存在すれば削除する
+    index_md = HTML_DIR / "index.md"
+    if index_md.exists():
+        index_md.unlink()
+        print(f"🗑️ 不要な目次インデックスファイルを削除しました: {index_md}")
+
     html_files = sorted(HTML_DIR.glob("**/*.html"))
-
-    lines = [
-        "# 📁 HTMLドキュメント・レポート一覧",
-        "",
-        "本セクションでは、`docs/html/` 配下に配置された生の HTML ドキュメント・レポート・各種ダッシュボードの一覧を自動集約しています。",
-        ""
-    ]
-
-    if not html_files:
-        lines.append("_現在配置されている HTML ドキュメントはありません。_")
-    else:
-        for html_file in html_files:
-            rel_path = html_file.relative_to(HTML_DIR)
-            title = extract_title(html_file)
-            lines.append(f"- [{title}]({rel_path}) `({rel_path})`")
-
-    INDEX_FILE.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"✅ HTML 目次ページを自動更新しました: {INDEX_FILE} (検出ファイル数: {len(html_files)})")
 
     update_mkdocs_nav(html_files)
 

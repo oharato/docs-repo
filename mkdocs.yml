@@ -73,7 +73,6 @@ nav:
       - ハマりポイント・設定ノウハウ集: system/pitfalls_and_tips.md
       - HTMLドキュメント配信ガイド: system/html_delivery_guide.md
   - HTMLコンテンツ (Raw HTML):
-      - 目次インデックス: html/index.md
       - サンプルシステムパフォーマンスレポート: html/sample_report.html
       - analytics:
           - 分析ダッシュボード概要: html/analytics/dashboard.html

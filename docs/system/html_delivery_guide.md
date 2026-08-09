@@ -13,24 +13,20 @@ docs-repo/
 ├── docs/
 │   ├── index.md
 │   ├── system/                  # システムドキュメント群
-│   └── html/                    # 生 HTML 配置ディレクトリ (新規)
-│       ├── index.md             # 自動生成される目次インデックス
+│   └── html/                    # 生 HTML 配置ディレクトリ
 │       ├── sample_report.html   # HTMLファイル例 1
 │       └── analytics/
 │           └── dashboard.html   # HTMLファイル例 2 (サブフォルダ可)
 ├── scripts/
-│   └── generate_html_index.py  # 自動目次生成スクリプト
+│   └── generate_html_index.py  # 左メニュー動的生成スクリプト
 └── mkdocs.yml
 ```
 
 ---
 
-## 2. 自動目次 & 左メニューツリー生成の仕組み (`scripts/generate_html_index.py`)
+## 2. 左メニュー自動ツリー生成の仕組み (`scripts/generate_html_index.py`)
 
-`docs/html/` 配下のすべての `.html` ファイルを再帰的に走査し、各ファイル内の `<title>` または `<h1>` の見出しを自動抽出して、以下の 2 つを全自動作成・更新します：
-
-1. **目次インデックスページ (`docs/html/index.md`)**: 全 HTML リンク付き一覧 Markdown。
-2. **左サイドバーツリー (`mkdocs.yml`)**: 左メニューの `HTMLコンテンツ (Raw HTML)` の配下にサブツリーとして各 HTML ページをタイトル付きで直接展開。
+`docs/html/` 配下のすべての `.html` ファイルを再帰的に走査し、各ファイル内の `<title>` または `<h1>` の見出しを自動抽出して、**`mkdocs.yml` の `HTMLコンテンツ (Raw HTML)` 配下に直接ツリー構造として動的反映**します。
 
 ### 実行タイミング
 - **ローカル開発時**: `python3 scripts/generate_html_index.py` を実行。
