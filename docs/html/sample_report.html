@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>サンプルシステムパフォーマンスレポート</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; background: #fafafa; color: #333; }
+        .card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>サンプルシステムパフォーマンスレポート</h1>
+        <p>これは <code>docs/html/sample_report.html</code> に直接置かれた生の HTML ドキュメントの配信テストです。</p>
+        <p>アクセス日時: <span id="time"></span></p>
+    </div>
+    <script>
+        document.getElementById('time').innerText = new Date().toLocaleString();
+    </script>
+</body>
+</html>

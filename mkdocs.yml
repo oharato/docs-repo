@@ -71,8 +71,11 @@ nav:
       - 詳細システム設計仕様: system/architecture_spec.md
       - コードレビュー結果: system/code_review.md
       - ハマりポイント・設定ノウハウ集: system/pitfalls_and_tips.md
+      - HTMLドキュメント配信ガイド: system/html_delivery_guide.md
+  - HTMLコンテンツ (Raw HTML): html/index.md
   - 技術ナレッジ (Knowledge):
       - 2026年08月:
+          - Mermaid ダイアグラム自動検証・リンターガイド: knowledge/2026-08/2026-08-09_mermaid_linter_and_validation_guide.md
           - Better Auth + Cloudflare + Hono ガイド: knowledge/2026-08/2026-08-05_better_auth_cloudflare_hono_guide.md
           - Linux CLI エディタ比較 & Fresh ガイド: knowledge/2026-08/2026-08-05_linux_cli_editors_with_filetree.md
           - 社内ドキュメント共有手法・アーキテクチャ調査: knowledge/2026-08/2026-08-05_modern_internal_doc_sharing_methods.md

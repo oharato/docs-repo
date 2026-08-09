@@ -39,6 +39,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Generate HTML Index Page
+        run: |
+          python scripts/generate_html_index.py
+
       - name: Build and Lint MkDocs Site (Strict Mode)
         run: |
           mkdocs build --strict
