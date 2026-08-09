@@ -6,17 +6,10 @@
 
 ## 1. 🛡️ インフラ & GCP セキュリティ (Terraform)
 
-### 1.1 GCP Provider v6 破壊的変更への対応
-- **事象**: Google Provider を `v6.0.0` 以上（例: `v6.50.0`）へアップグレードした際、`google_compute_backend_service` リソースの IAP 設定でエラーが発生。
-- **原因**: Provider v6 では、IAP ブロックを定義する場合に `enabled = true` の明示指定が必須化されました。
-- **対策**:
-  ```hcl
-  iap {
-    enabled              = true  # v6 では必須
-    oauth2_client_id     = var.iap_client_id
-    oauth2_client_secret = var.iap_client_secret
-  }
-  ```
+### 1.1 GCP Project レベル IAM バインドの制約 (`roles/iap.webServiceAdmin`)
+- **事象**: WIF Service Account に対して `roles/iap.webServiceAdmin`（IAP Web サービス管理者）をプロジェクト全体 (`google_project_iam_member`) に付与しようとすると `googleapi: Error 400: Role is not supported for this resource` が発生する。
+- **原因**: `roles/iap.webServiceAdmin` は特定のバックエンドサービス個体 (`iap_web/compute/services/...`) にのみ付与可能なリソースレベル専用ロールであり、プロジェクト全域レベルの IAM Policy にはバインドできない。
+- **対策**: プロジェクト全域レベルでの操作権限には `roles/iap.admin` を使用する。
 
 ### 1.2 IAP (Identity-Aware Proxy) のバイパスリスクと完全遮断
 - **事象**: HTTP (ポート 80) 通信が直接バックエンドに転送されていると、IAP 認証を経由せずに Cloud Run にアクセスできる脆弱性が生じる。
@@ -24,10 +17,9 @@
   1. **HTTP → HTTPS リダイレクト**: HTTP フォワーディングルールには直接バックエンドを紐付けず、専用の HTTP リダイレクト URL Map (`google_compute_url_map.http_redirect`) を適用して全アクセスを HTTPS へ強制リダイレクト。
   2. **Cloud Run の IAM 制限**: `member = "allUsers"` への `roles/run.invoker` 権限を削除し、IAP システムサービスアカウント (`service-<project_number>@gcp-sa-iap.iam.gserviceaccount.com`) のみに限定してアクセスをバインド。
 
-### 1.3 Workload Identity Federation (WIF) の最小権限原則
-- **事象**: CI/CD 用サービスアカウントに `roles/owner` や `role### 1.3 Workload Identity Federation (WIF) SA の最小権限化 (Least Privilege)
+### 1.3 Workload Identity Federation (WIF) SA の最小権限化 (Least Privilege)
 - **事象**: CI/CD 用 Service Account に `roles/owner` や `roles/editor` などの広範な特権をバインドすると、リポジトリ侵害時に重大なセキュリティリスクとなる。
-- **対策**: `roles/owner` / `editor` を完全に削除し、インフラ更新に必要な 9 つの最小権限のみに特定・制限。
+- **対策**: `roles/owner` / `editor` を完全に削除し、インフラ更新に必要な 11 個の最小権限のみに特定・制限。
   ```hcl
   for_each = toset([
     "roles/iam.workloadIdentityPoolAdmin",
@@ -44,13 +36,13 @@
   ])
   ```
 
-### 1.4 Artifact Registry のイミュータブルタグ (`immutable_tags = true`)
-- **事象**: `immutable_tags = true` を設定すると、`:latest` タグのイメージ上書きプッシュが `error from registry: cannot update tag latest` で拒否される。
-- **対策**: セキュリティ・再現性の観点から `:latest` の運用を止め、ビルドごとに意図したセマンティックバージョンタグ（例: `v1.0.1`, `v1.0.2`）を付与してプッシュ・デプロイを行う。
+### 1.4 `terraform fmt -check` と動的生成 `terraform.tfvars` の競合
+- **事象**: CI 上で `secrets.TFVARS_FILE` から一時的に動的生成される `terraform.tfvars` のフォーマット崩れにより、`terraform fmt -check` が Code 3 で失敗する。
+- **対策**: ソースコードである `.tf` ファイルのみを対象とし、`terraform fmt -check *.tf` またはディレクトリ指定で検証を行う。
 
-### 1.5 `.gitignore` における設定の落とし穴
-- **事象**: ローカルの `*.tfvars` を除外する目的で `.gitignore` に `*.tfvars` と記述すると、サンプルファイル `terraform.tfvars.example` も除外され Git 管理から外れる。
-- **対策**: 例外除外ルール `!terraform.tfvars.example` を明示的に追加。
+### 1.5 静的コンテンツ配信におけるコンテナのシンプル設計
+- **事象**: MkDocs 等の静的ドキュメント配信で独自 Dockerfile やコンテナビルドを行うと、パイプラインが複雑化し不要な管理コストが発生する。
+- **対策**: Cloud Run にはパブリック公式イメージ **`nginx:1.27-alpine`** を指定し、静的ファイルは GCS Volume Mount 経由で給仕させる。コンテンツ更新は `docs-repo` 側の GCS 同期 (`gcloud storage rsync`) のみで完結させる。
 
 ---
 
@@ -67,10 +59,6 @@
 - **事象**: `mkdocs.yml` の `markdown_extensions` (`pymdownx.superfences`) で mermaid を有効にしている状態で `extra_javascript` に外部 Mermaid CDN を指定すると、ライブラリの二重読み込み・二重初期化が発生し、レンダリングの不具合やダークモード切替エラーの原因となる。
 - **対策**: MkDocs Material ネイティブの Mermaid サポートに一本化し、`extra_javascript` から外部 CDN 読み込み行を削除。
 
-### 2.3 Mermaid ズーム機能の安定実装
-- **事象**: クリック時のモーダルズーム表示を SVG の DOM 複製方式で実装すると、SVG ID の重複やスクリプトエラーを引き起こす。
-- **対策**: DOM を複製せず、親要素へのクラス切替 (`is-zoomed`) と CSS ガラスモフィズムモーダルスタイルによるオーバーレイ方式を採用。
-
 ---
 
 ## 3. 🚀 CI/CD パイプライン高速化 (GitHub Actions)
@@ -85,16 +73,7 @@
   ```
 
 ### 3.2 GitHub Actions の高速化テクニック
-1. **Runner プリインストール `gcloud` の活用**: `ubuntu-latest` Runner には `gcloud` CLI が標準搭載されているため、`google-github-actions/setup-gcloud` ステップをスキップすることでインストール時間（15〜20 秒）を削減。
-2. **`uv` (`astral-sh/setup-uv`) による超高速パッケージ管理 & キャッシュ**:
+1. **`uv` (`astral-sh/setup-uv@v9.0.0`) による超高速パッケージ管理 & キャッシュ**:
    従来の `pip` の代わりに Rust 製の超高速パッケージインパクター `uv` を導入。`enable-cache: true` を有効にすることで、ホイールキャッシュ・コンパイル結果を高度に自動復元し、依存関係取得をサブセコンド化。
-3. **浅い Git クローン**: `actions/checkout` で `fetch-depth: 1` を指定してコミット履歴取得を最小化。
-
-### 3.4 Git Pre-commit Hook によるコミット前の事前自動検証 (マルチ PC 対応)
-- **目的**: 壊れたリンクや構成不備を含んだままコミット・Push されるのをローカル段階で 100% 阻止する。
-- **マルチ PC 共有設計**:
-  通常 `.git/hooks/` は追跡不可ですが、本リポジトリではコミット共有可能な `.githooks/` ディレクトリにフックを配置・一元管理しています。
-- **設定方法 (別 PC / 新環境クローン時)**:
-  `git config core.hooksPath .githooks`
-- **挙動**:
-  `git commit` 時に自動で `mkdocs build --strict` がローカル実行され、警告やエラーがあればコミットを中断し、修正を促します。
+2. **`actions/checkout@v7` や `google-github-actions/auth@v3` などの最新アクションの利用**:
+   バージョン警告を解消しセキュリティと安定性を確保。
