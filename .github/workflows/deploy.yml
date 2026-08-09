@@ -36,15 +36,15 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          uv pip install -r requirements.txt
+          uv pip install --system -r requirements.txt
 
       - name: Generate HTML Index Page
         run: |
-          uv run python scripts/generate_html_index.py
+          python scripts/generate_html_index.py
 
       - name: Build and Lint MkDocs Site (Strict Mode)
         run: |
-          uv run mkdocs build --strict
+          mkdocs build --strict
 
       - name: Sync Site Artifacts to GCS Bucket
         run: |
