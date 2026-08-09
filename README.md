@@ -29,6 +29,10 @@ Python 3.10 以上がインストールされていることを確認します�
 
 ### 2. パッケージのインストールとコミット前検証フックの有効化
 ```bash
+# uv を使う場合 (超高速推奨)
+uv pip install -r requirements.txt
+
+# または pip を使う場合
 pip install -r requirements.txt
 
 # 別PC/初回クローン時にローカルコミット前検証フックを有効化

@@ -82,7 +82,8 @@
 
 ### 3.2 GitHub Actions の高速化テクニック
 1. **Runner プリインストール `gcloud` の活用**: `ubuntu-latest` Runner には `gcloud` CLI が標準搭載されているため、`google-github-actions/setup-gcloud` ステップをスキップすることでインストール時間（15〜20 秒）を削減。
-2. **Pip キャッシュ**: `actions/setup-python` に `cache: 'pip'` を追加し、`mkdocs-material` などのパッケージ再ダウンロードを防止。
+2. **`uv` (`astral-sh/setup-uv`) による超高速パッケージ管理 & キャッシュ**:
+   従来の `pip` の代わりに Rust 製の超高速パッケージインパクター `uv` を導入。`enable-cache: true` を有効にすることで、ホイールキャッシュ・コンパイル結果を高度に自動復元し、依存関係取得をサブセコンド化。
 3. **浅い Git クローン**: `actions/checkout` で `fetch-depth: 1` を指定してコミット履歴取得を最小化。
 
 ### 3.4 Git Pre-commit Hook によるコミット前の事前自動検証 (マルチ PC 対応)
