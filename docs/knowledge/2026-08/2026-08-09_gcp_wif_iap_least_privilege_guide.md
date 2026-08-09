@@ -111,3 +111,232 @@ EOT
 - bootstrap と通常スタックは別 state とする。通常 CI に bootstrap 権限がない場合は失敗して停止し、権限不足を補う広域ロールの追加で回避しない。
 - Terraform は `fmt -check -recursive`、`validate`、plan を実行する。docs は lock 済み依存で `mkdocs build --strict` を実行する。
 - WIF 条件、SA の有効権限、Cloud Run の ingress、IAP 経由のアクセスを適用後に確認する。
+
+## Infrastructure Remediation Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Replace the shared, privileged WIF identity with isolated bootstrap, Terraform, and documentation-publishing identities while making the deployment reproducible and removing unused infrastructure.
+
+**Architecture:** `infra-terraform/bootstrap/` owns the WIF pool, providers, and service accounts in a dedicated state. The root Terraform stack owns the serving infrastructure and resource-scoped IAM only. GitHub workflows use the corresponding WIF identity, exact action SHAs, and locked dependencies.
+
+**Tech Stack:** Terraform 1.15.8, Google and Google Beta Provider 7.43.0, GitHub Actions OIDC, GCS, Cloud Run v2, MkDocs Material, uv.
+
+---
+
+### Task 1: Create the bootstrap stack
+
+**Files:**
+- Create: `infra-terraform/bootstrap/provider.tf`
+- Create: `infra-terraform/bootstrap/main.tf`
+- Create: `infra-terraform/bootstrap/variables.tf`
+- Create: `infra-terraform/bootstrap/outputs.tf`
+- Create: `infra-terraform/bootstrap/terraform.tfvars.example`
+- Modify: `infra-terraform/main.tf`
+- Modify: `infra-terraform/variables.tf`
+- Modify: `infra-terraform/outputs.tf`
+
+- [ ] **Step 1: Add a bootstrap backend and provider configuration**
+
+```hcl
+terraform {
+  required_version = "= 1.15.8"
+  backend "gcs" {
+    bucket = "try-gcp-504903-tfstate"
+    prefix = "terraform/state/bootstrap"
+  }
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "= 7.43.0"
+    }
+  }
+}
+```
+
+- [ ] **Step 2: Define both WIF trust inputs as required variables**
+
+```hcl
+variable "terraform_repository_id" { type = string }
+variable "docs_repository_id" { type = string }
+variable "project_id" { type = string }
+```
+
+Validate each ID with `can(regex("^[0-9]+$", var.terraform_repository_id))`; set `terraform_repository_id = "1327451305"` and `docs_repository_id = "1327472883"` in the bootstrap tfvars; declare fixed workflow paths in locals, not as user inputs.
+
+- [ ] **Step 3: Implement two service accounts and two WIF providers**
+
+Create `terraform_deployer` and `docs_publisher` service accounts. Map `assertion.repository_id`, `assertion.ref`, and `assertion.job_workflow_ref`; give each provider a condition requiring its repository ID, `refs/heads/main`, and respectively `.github/workflows/terraform.yml@refs/heads/main` or `.github/workflows/deploy.yml@refs/heads/main`. Bind each service account only to its provider's repository-ID principal set.
+
+- [ ] **Step 4: Grant bootstrap-defined roles**
+
+Grant the docs account no project role. In the root stack, grant it `roles/storage.objectAdmin` on `module.gcs.bucket_name`. Give the Terraform account only the roles required to create and update GCS, Cloud Run, Compute LB, IAP, and Artifact Registry-free service accounts; do not grant `roles/resourcemanager.projectIamAdmin`, `roles/iam.workloadIdentityPoolAdmin`, or `roles/iam.serviceAccountAdmin`.
+
+- [ ] **Step 5: Remove the old shared WIF module from the root stack**
+
+Delete `module "wif"` and the `github_repositories` variable and outputs. Replace them with required bootstrap outputs documented as the values for the GitHub Secrets.
+
+- [ ] **Step 6: Validate the bootstrap and root stacks**
+
+Run:
+
+```bash
+terraform -chdir=infra-terraform/bootstrap init -upgrade
+terraform -chdir=infra-terraform/bootstrap fmt -check -recursive
+terraform -chdir=infra-terraform/bootstrap validate
+terraform -chdir=infra-terraform fmt -check -recursive
+terraform -chdir=infra-terraform validate
+```
+
+- [ ] **Step 7: Commit**
+
+```bash
+git -C infra-terraform add bootstrap main.tf variables.tf outputs.tf modules/wif
+git -C infra-terraform commit -m "feat: isolate WIF bootstrap identities"
+```
+
+### Task 2: Perform the explicit WIF state and secret cutover
+
+**Files:**
+- Create: `infra-terraform/bootstrap/MIGRATION.md`
+- Modify: `infra-terraform/README.md`
+
+- [ ] **Step 1: Document the state migration commands**
+
+Require an administrator to back up both state files before moving the existing WIF resources from the root state into the bootstrap state. The guide must use `terraform state pull > root-before-wif-migration.tfstate` and require a reviewed `terraform plan` before every apply.
+
+- [ ] **Step 2: Apply and cut over**
+
+Run bootstrap apply with administrator credentials, set `GCP_WORKLOAD_IDENTITY_PROVIDER` and `GCP_SERVICE_ACCOUNT` in each repository to its corresponding bootstrap outputs, then run root plan/apply with the new Terraform identity. Remove the old shared provider, binding, and service account only after both workflows succeed.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git -C infra-terraform add bootstrap/MIGRATION.md README.md
+git -C infra-terraform commit -m "docs: add WIF cutover procedure"
+```
+
+### Task 3: Simplify serving infrastructure
+
+**Files:**
+- Delete: `infra-terraform/modules/artifact_registry/main.tf`
+- Delete: `infra-terraform/modules/artifact_registry/variables.tf`
+- Delete: `infra-terraform/modules/artifact_registry/outputs.tf`
+- Modify: `infra-terraform/main.tf`
+- Modify: `infra-terraform/variables.tf`
+- Modify: `infra-terraform/outputs.tf`
+- Modify: `infra-terraform/modules/cloud_run/main.tf`
+- Modify: `infra-terraform/modules/lb_iap/main.tf`
+- Modify: `infra-terraform/terraform.tfvars.example`
+
+- [ ] **Step 1: Write the configuration assertions**
+
+Use `terraform validate` against an example with an empty `domain_name` and expect validation to fail. Use a second example with a digest-form image (`nginx@sha256:` followed by 64 lowercase hexadecimal characters) and expect validation to pass.
+
+- [ ] **Step 2: Implement the smallest configuration**
+
+Delete the Artifact Registry module, `repository_id`, and all related outputs. Change Cloud Run from:
+
+```hcl
+image = "nginx:1.27-alpine"
+```
+
+to:
+
+```hcl
+image = var.container_image
+```
+
+Require `domain_name` and a digest-form `container_image` with Terraform validation. Remove every conditional `count` from the HTTPS resources so port 80 redirect and port 443 endpoint are always created together.
+
+- [ ] **Step 3: Resolve and pin the NGINX digest**
+
+Obtain the immutable digest for the reviewed official `nginx:1.30.4-alpine` image, place the full `nginx@sha256:...` reference in `terraform.tfvars.example`, and set the same digest as the variable default. Do not use a mutable tag.
+
+- [ ] **Step 4: Validate and commit**
+
+```bash
+terraform -chdir=infra-terraform fmt -check -recursive
+terraform -chdir=infra-terraform validate
+git -C infra-terraform add -A
+git -C infra-terraform commit -m "refactor: simplify Cloud Run image delivery"
+```
+
+### Task 4: Make CI deterministic and least-privileged
+
+**Files:**
+- Modify: `infra-terraform/.github/workflows/terraform.yml`
+- Modify: `docs-repo/.github/workflows/deploy.yml`
+- Modify: `docs-repo/requirements.txt`
+- Create: `docs-repo/uv.lock`
+
+- [ ] **Step 1: Pin action revisions**
+
+Replace every `uses:` tag with these full release SHAs and retain the release in an inline comment:
+
+```yaml
+uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
+uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+```
+
+- [ ] **Step 2: Restrict workflow permissions**
+
+Remove `pull-requests: write` from the Terraform workflow. Retain only `contents: read` and `id-token: write` in both workflows.
+
+- [ ] **Step 3: Update Terraform and workflow validation**
+
+Set the setup action Terraform version to `1.15.8`, replace `terraform fmt -check *.tf` with `terraform fmt -check -recursive`, and retain non-interactive `validate`, `plan`, and `apply`.
+
+- [ ] **Step 4: Lock Python dependencies**
+
+Replace range-only requirements with direct requirements, run `uv lock`, commit `uv.lock`, and replace:
+
+```yaml
+uv venv
+uv pip install -r requirements.txt
+```
+
+with:
+
+```yaml
+uv sync --frozen
+echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
+```
+
+- [ ] **Step 5: Validate and commit**
+
+```bash
+docs-repo/.venv/bin/mkdocs build --strict --config-file docs-repo/mkdocs.yml
+git -C docs-repo add .github/workflows/deploy.yml requirements.txt uv.lock
+git -C docs-repo commit -m "build: lock documentation deployment dependencies"
+```
+
+### Task 5: Upgrade Terraform dependencies and update operational documentation
+
+**Files:**
+- Modify: `infra-terraform/provider.tf`
+- Modify: `infra-terraform/.terraform.lock.hcl`
+- Modify: `infra-terraform/README.md`
+- Modify: `docs-repo/docs/knowledge/2026-08/2026-08-09_gcp_wif_iap_least_privilege_guide.md`
+
+- [ ] **Step 1: Upgrade providers**
+
+Set both provider constraints to `= 7.43.0`, run `terraform -chdir=infra-terraform init -upgrade`, and review the complete plan before applying. Do not manually edit `.terraform.lock.hcl`.
+
+- [ ] **Step 2: Document final required secrets and recovery**
+
+Document the four purpose-specific secret values, the bootstrap-only execution rule, the state backup location, and rollback as restoring the reviewed state backup before re-running the prior root plan.
+
+- [ ] **Step 3: Run final checks and commit**
+
+```bash
+terraform -chdir=infra-terraform fmt -check -recursive
+terraform -chdir=infra-terraform validate
+docs-repo/.venv/bin/mkdocs build --strict --config-file docs-repo/mkdocs.yml
+git -C infra-terraform add provider.tf .terraform.lock.hcl README.md
+git -C infra-terraform commit -m "build: upgrade Terraform toolchain"
+git -C docs-repo add docs/knowledge/2026-08/2026-08-09_gcp_wif_iap_least_privilege_guide.md
+git -C docs-repo commit -m "docs: record infrastructure remediation"
+```
