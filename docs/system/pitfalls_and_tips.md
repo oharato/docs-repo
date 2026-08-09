@@ -85,6 +85,9 @@
 2. **Pip キャッシュ**: `actions/setup-python` に `cache: 'pip'` を追加し、`mkdocs-material` などのパッケージ再ダウンロードを防止。
 3. **浅い Git クローン**: `actions/checkout` で `fetch-depth: 1` を指定してコミット履歴取得を最小化。
 
-### 3.3 CI/CD 内の一時 Secret ファイルの後始末
-- **事象**: CI/CD ステップで `TFVARS_FILE` Secret から `terraform.tfvars` を生成する際、作成直後にクリーンアップを行うと `terraform apply` 時に値が参照できず失敗する。
-- **対策**: クリーンアップステップは必ず `terraform apply` の後のワークフロー最末尾に配置し、`if: always()` を付与して失敗時も含め確実に削除されるように制御。
+### 3.4 Git Pre-commit Hook によるコミット前の事前自動検証
+- **目的**: 壊れたリンクや構成不備を含んだままコミット・Push されるのをローカル段階で 100% 阻止する。
+- **設定方法**:
+  リポジトリルートで `bash scripts/setup_hooks.sh` を実行。
+- **挙動**:
+  `git commit` 時に自動で `mkdocs build --strict` がローカル実行され、警告やエラーがあればコミットを中断し、修正を促します。
