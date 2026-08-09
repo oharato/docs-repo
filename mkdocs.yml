@@ -74,8 +74,9 @@ nav:
       - HTMLドキュメント配信ガイド: system/html_delivery_guide.md
   - HTMLコンテンツ (Raw HTML):
       - 目次インデックス: html/index.md
-      - 分析ダッシュボード概要: html/analytics/dashboard.html
       - サンプルシステムパフォーマンスレポート: html/sample_report.html
+      - analytics:
+          - 分析ダッシュボード概要: html/analytics/dashboard.html
   - 技術ナレッジ (Knowledge):
       - 2026年08月:
           - Mermaid ダイアグラム自動検証・リンターガイド: knowledge/2026-08/2026-08-09_mermaid_linter_and_validation_guide.md

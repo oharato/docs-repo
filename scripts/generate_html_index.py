@@ -22,18 +22,62 @@ def extract_title(html_path: Path) -> str:
     
     return html_path.name
 
+def build_tree_structure(html_files):
+    """ファイルパス群から再帰的な辞書ツリーを構築"""
+    tree = {"_files": []}
+
+    for html_file in html_files:
+        rel_path = html_file.relative_to(HTML_DIR)
+        parts = rel_path.parts
+        
+        current = tree
+        for part in parts[:-1]: # ディレクトリ部分
+            if part not in current:
+                current[part] = {"_files": []}
+            current = current[part]
+        
+        # 最深部のファイル
+        title = extract_title(html_file)
+        full_rel_path = html_file.relative_to(Path("docs"))
+        current["_files"].append((title, str(full_rel_path)))
+
+    return tree
+
+def render_tree_to_yaml(tree, indent_level=2):
+    """辞書ツリーを MkDocs nav YAML のネスト文字列に変換"""
+    lines = []
+    indent = " " * indent_level
+
+    # 直下のファイルを配置
+    for title, path in tree.get("_files", []):
+        lines.append(f"{indent}- {title}: {path}")
+
+    # サブディレクトリを順に処理
+    for key in sorted(tree.keys()):
+        if key == "_files":
+            continue
+        lines.append(f"{indent}- {key}:")
+        subtree_lines = render_tree_to_yaml(tree[key], indent_level + 4)
+        lines.extend(subtree_lines)
+
+    return lines
+
 def update_mkdocs_nav(html_files):
-    """mkdocs.yml 内の HTML セクションをサブツリー形式で動的更新"""
+    """mkdocs.yml 内の HTML セクションをサブディレクトリ階層化ツリー形式で動的更新"""
     if not MKDOCS_YML.exists():
         return
 
     content = MKDOCS_YML.read_text(encoding="utf-8")
     
-    nav_lines = ["  - HTMLコンテンツ (Raw HTML):", "      - 目次インデックス: html/index.md"]
-    for html_file in html_files:
-        rel_path = html_file.relative_to(Path("docs"))
-        title = extract_title(html_file)
-        nav_lines.append(f"      - {title}: {rel_path}")
+    tree = build_tree_structure(html_files)
+    
+    nav_lines = [
+        "  - HTMLコンテンツ (Raw HTML):",
+        "      - 目次インデックス: html/index.md"
+    ]
+    
+    yaml_tree_lines = render_tree_to_yaml(tree, indent_level=6)
+    nav_lines.extend(yaml_tree_lines)
 
     new_section = "\n".join(nav_lines)
 
@@ -42,7 +86,7 @@ def update_mkdocs_nav(html_files):
     if re.search(pattern, content, re.DOTALL):
         updated_content = re.sub(pattern, new_section, content, flags=re.DOTALL)
         MKDOCS_YML.write_text(updated_content, encoding="utf-8")
-        print("✅ mkdocs.yml の左ナビゲーションツリーを自動更新しました。")
+        print("✅ mkdocs.yml の左ナビゲーションツリーを階層化更新しました。")
 
 def main():
     if not HTML_DIR.exists():
