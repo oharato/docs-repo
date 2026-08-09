@@ -12,8 +12,7 @@ GCP 上の Cloud Run, GCS, Artifact Registry, Global HTTP(S) Load Balancer (IAP 
 
 | ロール ID | ロール名称 | 割り当て目的 |
 | :--- | :--- | :--- |
-| `roles/iap.admin` | IAP 管理者 | IAP 認証の設定 |
-| `roles/iap.webServiceAdmin` | IAP Web サービス管理者 | IAP バックエンドサービス (`iap_web/compute/services/`) の IAM ポリシー設定 |
+| `roles/iap.admin` | IAP 管理者 | IAP 認証の設定およびバックエンドサービスへの IAM ポリシー割り当て管理 |
 | `roles/compute.admin` | Compute Engine 管理者 | Load Balancer (URL Map, Forwarding Rule, Backend Service) の構築 |
 | `roles/compute.securityAdmin` | Compute セキュリティ管理者 | セキュリティポリシー・アクセス制御の調整 |
 | `roles/run.admin` | Cloud Run 管理者 | Cloud Run サービスのプロビジョニングおよび設定更新 |
@@ -25,7 +24,7 @@ GCP 上の Cloud Run, GCS, Artifact Registry, Global HTTP(S) Load Balancer (IAP 
 | `roles/iam.workloadIdentityPoolAdmin` | Workload Identity Pool 管理者 | OIDC WIF Pool / Provider の設定管理 |
 
 > **[!NOTE]**
-> `roles/editor` や `roles/compute.securityAdmin` 等の重複・過剰権限はセキュリティ上のリスクとなるため、全排除されています。
+> `roles/iap.webServiceAdmin` などのリソース単位専用ロールはプロジェクトレベルの IAM Policy (`google_project_iam_member`) にバインドしようとすると `Error 400: Role is not supported for this resource` になるため、プロジェクトレベルでは `roles/iap.admin` を使用します。
 
 ---
 

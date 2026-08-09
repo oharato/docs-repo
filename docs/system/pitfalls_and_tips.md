@@ -40,7 +40,6 @@
     "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountUser",
     "roles/iap.admin",
-    "roles/iap.webServiceAdmin",
   ])
   ```
 
