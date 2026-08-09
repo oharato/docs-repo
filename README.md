@@ -27,9 +27,12 @@ docs-repo/
 ### 1. 前提条件
 Python 3.10 以上がインストールされていることを確認します。
 
-### 2. パッケージのインストール
+### 2. パッケージのインストールとコミット前検証フックの有効化
 ```bash
 pip install -r requirements.txt
+
+# 別PC/初回クローン時にローカルコミット前検証フックを有効化
+git config core.hooksPath .githooks
 ```
 
 ### 3. ローカルサーバーの起動

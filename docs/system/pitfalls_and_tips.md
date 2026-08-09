@@ -85,9 +85,11 @@
 2. **Pip キャッシュ**: `actions/setup-python` に `cache: 'pip'` を追加し、`mkdocs-material` などのパッケージ再ダウンロードを防止。
 3. **浅い Git クローン**: `actions/checkout` で `fetch-depth: 1` を指定してコミット履歴取得を最小化。
 
-### 3.4 Git Pre-commit Hook によるコミット前の事前自動検証
+### 3.4 Git Pre-commit Hook によるコミット前の事前自動検証 (マルチ PC 対応)
 - **目的**: 壊れたリンクや構成不備を含んだままコミット・Push されるのをローカル段階で 100% 阻止する。
-- **設定方法**:
-  リポジトリルートで `bash scripts/setup_hooks.sh` を実行。
+- **マルチ PC 共有設計**:
+  通常 `.git/hooks/` は追跡不可ですが、本リポジトリではコミット共有可能な `.githooks/` ディレクトリにフックを配置・一元管理しています。
+- **設定方法 (別 PC / 新環境クローン時)**:
+  `git config core.hooksPath .githooks`
 - **挙動**:
   `git commit` 時に自動で `mkdocs build --strict` がローカル実行され、警告やエラーがあればコミットを中断し、修正を促します。
