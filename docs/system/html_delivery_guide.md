@@ -25,13 +25,16 @@ docs-repo/
 
 ---
 
-## 2. 自動目次生成の仕組み (`scripts/generate_html_index.py`)
+## 2. 自動目次 & 左メニューツリー生成の仕組み (`scripts/generate_html_index.py`)
 
-`docs/html/` 配下のすべての `.html` ファイルを再帰的に走査し、各ファイル内の `<title>` または `<h1>` の見出しを自動抽出して、目次ページ (`docs/html/index.md`) を自動作成・更新します。
+`docs/html/` 配下のすべての `.html` ファイルを再帰的に走査し、各ファイル内の `<title>` または `<h1>` の見出しを自動抽出して、以下の 2 つを全自動作成・更新します：
+
+1. **目次インデックスページ (`docs/html/index.md`)**: 全 HTML リンク付き一覧 Markdown。
+2. **左サイドバーツリー (`mkdocs.yml`)**: 左メニューの `HTMLコンテンツ (Raw HTML)` の配下にサブツリーとして各 HTML ページをタイトル付きで直接展開。
 
 ### 実行タイミング
-- **ローカル開発時**: `python3 scripts/generate_html_index.py` を実行して目次を更新。
-- **CI/CD 自動連携**: GitHub Actions (`deploy.yml`) の `mkdocs build` 直前に自動実行されるため、**HTML ファイルを追加して `git push` するだけで目次が全自動更新・配信**されます。
+- **ローカル開発時**: `python3 scripts/generate_html_index.py` を実行。
+- **CI/CD 自動連携**: GitHub Actions (`deploy.yml`) の `mkdocs build` 直前に自動実行されるため、**HTML ファイルを追加して `git push` するだけで、左サイドバーメニューおよび目次ページが全自動で更新・配信**されます。
 
 ---
 
