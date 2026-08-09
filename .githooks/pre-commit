@@ -3,9 +3,13 @@
 
 echo "🔍 Running MkDocs Strict Mode Validation before commit..."
 
+export PATH="$HOME/.local/bin:$PATH"
+
 MKDOCS_CMD=""
 
-if command -v mkdocs >/dev/null 2>&1; then
+if command -v uv >/dev/null 2>&1; then
+    MKDOCS_CMD="uv run mkdocs"
+elif command -v mkdocs >/dev/null 2>&1; then
     MKDOCS_CMD="mkdocs"
 elif [ -f ".venv/bin/mkdocs" ]; then
     MKDOCS_CMD=".venv/bin/mkdocs"
