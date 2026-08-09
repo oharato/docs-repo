@@ -71,7 +71,26 @@
 }
 
 /* ==========================================================================
-   Left Sidebar Navigation Styling (Section Headers vs Leaf Page Items)
+   Page Layout & Container Width Adjustments (Wider Screen Area)
+   ========================================================================== */
+
+/* Widen overall site container grid (Default: 61rem / 1220px -> 1480px) */
+.md-grid {
+  max-width: 1480px;
+}
+
+/* Widen Left Navigation Sidebar & Right ToC Sidebar on Desktop */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary {
+    width: 14.5rem;
+  }
+  .md-sidebar--secondary {
+    width: 14.5rem;
+  }
+}
+
+/* ==========================================================================
+   Left Sidebar Navigation Styling (No Borders, Clean & Spacious)
    ========================================================================== */
 
 /* 1. Top Level & Section Category Headers (グループ見出し) */
@@ -83,16 +102,16 @@
   color: var(--md-typeset-color, #1e293b) !important;
   text-transform: none;
   padding-top: 0.6rem !important;
-  padding-bottom: 0.6rem !important;
+  padding-bottom: 0.4rem !important;
   margin-top: 0.4rem;
-  border-bottom: 1px solid var(--md-default-fg-color--lightest, rgba(0, 0, 0, 0.07));
-  transition: color 0.15s ease, background-color 0.15s ease;
+  border-bottom: none !important; /* 罫線を完全に除去 */
+  transition: color 0.15s ease;
 }
 
 [data-md-color-scheme="slate"] .md-nav__item--nested > .md-nav__link,
 [data-md-color-scheme="slate"] .md-nav__item--section > .md-nav__link {
   color: #f1f5f9 !important;
-  border-bottom-color: rgba(255, 255, 255, 0.1);
+  border-bottom: none !important;
 }
 
 /* Section Header Hover */
@@ -103,13 +122,13 @@
 /* 2. Leaf Page Links (個別のページ要素) */
 .md-nav__item:not(.md-nav__item--nested) > .md-nav__link {
   font-weight: 400;
-  font-size: 0.8rem;
-  padding-left: 1.2rem !important;
+  font-size: 0.82rem;
+  padding-left: 0.8rem !important;
   padding-top: 0.35rem !important;
   padding-bottom: 0.35rem !important;
-  border-left: 2px solid transparent;
-  border-radius: 0 6px 6px 0;
-  margin-left: 0.2rem;
+  border-left: none !important; /* 罫線を完全除去 */
+  border-radius: 6px;
+  margin-left: 0;
   transition: all 0.15s ease;
 }
 
@@ -117,7 +136,6 @@
 .md-nav__item:not(.md-nav__item--nested) > .md-nav__link:hover {
   background-color: var(--md-accent-fg-color--transparent, rgba(59, 130, 246, 0.08));
   color: var(--md-accent-fg-color, #2563eb);
-  border-left-color: var(--md-accent-fg-color, #3b82f6);
 }
 
 /* 3. Active Page Link (現在選択されているアクティブページ) */
@@ -125,23 +143,24 @@
 .md-nav__link--active:not(.md-nav__item--nested) {
   font-weight: 600 !important;
   color: var(--md-accent-fg-color, #2563eb) !important;
-  background-color: var(--md-accent-fg-color--transparent, rgba(59, 130, 246, 0.12)) !important;
-  border-left: 3px solid var(--md-accent-fg-color, #2563eb) !important;
+  background-color: var(--md-accent-fg-color--transparent, rgba(59, 130, 246, 0.14)) !important;
+  border-left: none !important; /* 罫線除去 */
+  border-radius: 6px;
 }
 
 [data-md-color-scheme="slate"] .md-nav__item--active:not(.md-nav__item--nested) > .md-nav__link {
   color: #60a5fa !important;
-  background-color: rgba(96, 165, 250, 0.15) !important;
-  border-left-color: #60a5fa !important;
+  background-color: rgba(96, 165, 250, 0.18) !important;
+  border-left: none !important;
 }
 
-/* 4. Submenu List Indentation Tree Line */
+/* 4. Submenu List Indentation (罫線除去・自然なインデント) */
 .md-nav__list .md-nav__list {
-  padding-left: 0.4rem;
-  border-left: 1px dashed var(--md-default-fg-color--lightest, rgba(0, 0, 0, 0.12));
-  margin-left: 0.6rem;
+  padding-left: 0.6rem;
+  border-left: none !important; /* 破線罫線を完全除去 */
+  margin-left: 0;
 }
 
 [data-md-color-scheme="slate"] .md-nav__list .md-nav__list {
-  border-left-color: rgba(255, 255, 255, 0.12);
+  border-left: none !important;
 }
