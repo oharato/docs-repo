@@ -37,6 +37,7 @@
     "roles/artifactregistry.admin",
     "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountUser",
+    "roles/iap.admin",
   ])
   ```
 
