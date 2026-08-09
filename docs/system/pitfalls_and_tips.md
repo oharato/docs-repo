@@ -34,11 +34,13 @@
     "roles/resourcemanager.projectIamAdmin",
     "roles/run.admin",
     "roles/compute.admin",
+    "roles/compute.securityAdmin",
     "roles/storage.admin",
     "roles/artifactregistry.admin",
     "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountUser",
     "roles/iap.admin",
+    "roles/iap.webServiceAdmin",
   ])
   ```
 
