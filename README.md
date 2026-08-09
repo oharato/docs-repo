@@ -29,11 +29,8 @@ Python 3.10 以上がインストールされていることを確認します�
 
 ### 2. パッケージのインストールとコミット前検証フックの有効化
 ```bash
-# uv を使う場合 (超高速推奨)
-uv pip install -r requirements.txt
-
-# または pip を使う場合
-pip install -r requirements.txt
+# `uv.lock` に固定された依存関係をインストール
+uv sync --frozen
 
 # 別PC/初回クローン時にローカルコミット前検証フックを有効化
 git config core.hooksPath .githooks
@@ -41,7 +38,7 @@ git config core.hooksPath .githooks
 
 ### 3. ローカルサーバーの起動
 ```bash
-mkdocs serve
+uv run mkdocs serve
 ```
 起動後、ブラウザで [http://127.0.0.1:8000](http://127.0.0.1:8000) にアクセスしてプレビューを確認します。ファイル更新時はリアルタイムで自動リロードされます。
 

@@ -69,6 +69,15 @@ EOT
 - Cloud Run 用サービスアカウントへの、対象バケットだけの `roles/storage.objectViewer`
 - GitHub Actions の OIDC 利用。長期サービスアカウントキーを発行しないこと
 
+## 実施済み: CI と依存関係の再現性改善
+
+2026-08-10 に、WIF の信頼条件およびサービスアカウントの権限を変更せず、次の是正を実施した。
+
+- Terraform とドキュメント配信の workflow にある全ての Actions を、リリースを示すコメント付きの完全なコミット SHA に固定した。
+- Terraform workflow の未使用 `pull-requests: write` 権限を削除し、`contents: read` と `id-token: write` のみを維持した。
+- Terraform CLI を `1.15.8`、Google / Google Beta Provider を `7.43.0` に固定し、ルートスタックの lock file を Terraform に再生成させた。
+- MkDocs の直接依存をバージョン固定し、`pyproject.toml` と `uv.lock` を追加した。CI とローカル手順は `uv sync --frozen` に統一した。
+
 ## 実施順序
 
 1. WIF をサービスアカウント別に分離し、`docs-repo` からインフラ管理権限を外す。

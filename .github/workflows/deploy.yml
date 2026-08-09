@@ -17,28 +17,27 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v7 # Latest v7.x
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
 
       - name: Authenticate to Google Cloud via WIF
-        uses: google-github-actions/auth@v3 # Latest v3.x
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
 
       - name: Set up uv & Python
-        uses: astral-sh/setup-uv@v9.0.0 # Latest v9.x (Immutable Tag)
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           python-version: '3.12'
           enable-cache: true
 
       - name: Install Dependencies
         run: |
-          uv venv
-          echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
-          uv pip install -r requirements.txt
+          uv sync --frozen
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Generate HTML Index Page
         run: |
