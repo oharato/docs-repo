@@ -13,7 +13,8 @@ GCP 上の Cloud Run, GCS, Artifact Registry, Global HTTP(S) Load Balancer (IAP 
 | ロール ID | ロール名称 | 割り当て目的 |
 | :--- | :--- | :--- |
 | `roles/iap.admin` | IAP 管理者 | IAP 認証の設定およびバックエンドサービスへの IAM ポリシー割り当て管理 |
-| `roles/compute.admin` | Compute Engine 管理者 | Load Balancer (URL Map, Forwarding Rule, Backend Service) の構築 |
+| `roles/compute.networkAdmin` | Compute ネットワーク管理者 | Global Forwarding Rule や Target Proxy 等のネットワークリソース管理 |
+| `roles/compute.loadBalancerAdmin` | Compute LB 管理者 | Load Balancer (URL Map, Backend Service, Serverless NEG) の構築 |
 | `roles/compute.securityAdmin` | Compute セキュリティ管理者 | セキュリティポリシー・アクセス制御の調整 |
 | `roles/run.admin` | Cloud Run 管理者 | Cloud Run サービスのプロビジョニングおよび設定更新 |
 | `roles/storage.admin` | Storage 管理者 | GCS バケットおよびオブジェクトのプロビジョニング |
