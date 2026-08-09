@@ -17,19 +17,19 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v4 # Latest v4.x
+        uses: actions/checkout@v7 # Latest v7.x
         with:
           fetch-depth: 1
 
       - name: Authenticate to Google Cloud via WIF
-        uses: google-github-actions/auth@v2 # Latest v2.x
+        uses: google-github-actions/auth@v3 # Latest v3.x
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
 
       - name: Set up uv & Python
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v9.0.0 # Latest v9.x (Immutable Tag)
         with:
           python-version: '3.12'
           enable-cache: true
