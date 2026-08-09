@@ -69,3 +69,79 @@
   background-color: #2d2d3d;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* ==========================================================================
+   Left Sidebar Navigation Styling (Section Headers vs Leaf Page Items)
+   ========================================================================== */
+
+/* 1. Top Level & Section Category Headers (グループ見出し) */
+.md-nav__item--nested > .md-nav__link,
+.md-nav__item--section > .md-nav__link {
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.03em;
+  color: var(--md-typeset-color, #1e293b) !important;
+  text-transform: none;
+  padding-top: 0.6rem !important;
+  padding-bottom: 0.6rem !important;
+  margin-top: 0.4rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest, rgba(0, 0, 0, 0.07));
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+[data-md-color-scheme="slate"] .md-nav__item--nested > .md-nav__link,
+[data-md-color-scheme="slate"] .md-nav__item--section > .md-nav__link {
+  color: #f1f5f9 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Section Header Hover */
+.md-nav__item--nested > .md-nav__link:hover {
+  color: var(--md-accent-fg-color, #3b82f6) !important;
+}
+
+/* 2. Leaf Page Links (個別のページ要素) */
+.md-nav__item:not(.md-nav__item--nested) > .md-nav__link {
+  font-weight: 400;
+  font-size: 0.8rem;
+  padding-left: 1.2rem !important;
+  padding-top: 0.35rem !important;
+  padding-bottom: 0.35rem !important;
+  border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0;
+  margin-left: 0.2rem;
+  transition: all 0.15s ease;
+}
+
+/* Leaf Item Hover Effect */
+.md-nav__item:not(.md-nav__item--nested) > .md-nav__link:hover {
+  background-color: var(--md-accent-fg-color--transparent, rgba(59, 130, 246, 0.08));
+  color: var(--md-accent-fg-color, #2563eb);
+  border-left-color: var(--md-accent-fg-color, #3b82f6);
+}
+
+/* 3. Active Page Link (現在選択されているアクティブページ) */
+.md-nav__item--active:not(.md-nav__item--nested) > .md-nav__link,
+.md-nav__link--active:not(.md-nav__item--nested) {
+  font-weight: 600 !important;
+  color: var(--md-accent-fg-color, #2563eb) !important;
+  background-color: var(--md-accent-fg-color--transparent, rgba(59, 130, 246, 0.12)) !important;
+  border-left: 3px solid var(--md-accent-fg-color, #2563eb) !important;
+}
+
+[data-md-color-scheme="slate"] .md-nav__item--active:not(.md-nav__item--nested) > .md-nav__link {
+  color: #60a5fa !important;
+  background-color: rgba(96, 165, 250, 0.15) !important;
+  border-left-color: #60a5fa !important;
+}
+
+/* 4. Submenu List Indentation Tree Line */
+.md-nav__list .md-nav__list {
+  padding-left: 0.4rem;
+  border-left: 1px dashed var(--md-default-fg-color--lightest, rgba(0, 0, 0, 0.12));
+  margin-left: 0.6rem;
+}
+
+[data-md-color-scheme="slate"] .md-nav__list .md-nav__list {
+  border-left-color: rgba(255, 255, 255, 0.12);
+}
