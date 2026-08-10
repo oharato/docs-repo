@@ -48,12 +48,12 @@ uv run mkdocs serve
 
 本リポジトリの Actions を正常に動作させるため、GitHub リポジトリの **Settings > Secrets and variables > Actions** にて以下の Secrets を設定してください。
 
-※ 各設定値は `infra-terraform` ディレクトリで `terraform apply` を実行した後の output から取得できます。
+※ WIF の値は `infra-terraform/bootstrap`、バケット名はルートスタックの output から取得できます。
 
 | Secret 名 | 説明 | 取得元 (Terraform Output) |
 | :--- | :--- | :--- |
-| `GCP_WORKLOAD_IDENTITY_PROVIDER` | WIF Provider のリソース名全称 | `wif_provider_name` |
-| `GCP_SERVICE_ACCOUNT` | GitHub Actions デプロイ専用 GCP SA メールアドレス | `wif_service_account_email` |
+| `GCP_WORKLOAD_IDENTITY_PROVIDER` | docs 公開専用 WIF Provider のリソース名 | `docs_workload_identity_provider` |
+| `GCP_SERVICE_ACCOUNT` | docs 公開専用 SA メールアドレス | `docs_service_account_email` |
 | `GCS_BUCKET` | ドキュメント同期先の GCS バケット名 | `gcs_bucket_name` |
 
 ---
@@ -62,4 +62,5 @@ uv run mkdocs serve
 
 - `main` ブランチへのコミット Push 時にワークフローが自動トリガーされます。
 - GitHub サービス認証は **Workload Identity Federation (WIF)** を利用し、短時間有効な OIDC アクセストークンを自動取得します（サービスアカウントキー JSON の発行は不要）。
+- docs 公開用 SA は `docs-repo` の `main` と `deploy.yml` にだけ信頼条件を限定し、対象 bucket にだけ同期権限を持ちます。
 - `mkdocs build` により生成された `site/` ディレクトリ配下のファイル群を、`gcloud storage rsync --recursive --delete-unmatched-destination-objects` コマンドで GCS バケットへ差分同期します。
