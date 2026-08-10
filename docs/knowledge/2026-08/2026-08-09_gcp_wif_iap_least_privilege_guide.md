@@ -19,6 +19,7 @@ GitHub Actions の認証は用途別に分離し、通常の CI/CD にプロジ�
 ## State と bucket IAM
 
 - Terraform state bucket は Uniform bucket-level access を有効にする。これにより IAM Condition で PR plan の state prefix を限定できる。
+- 管理者の bootstrap state 操作も `terraform/state/bootstrap/` prefix の `roles/storage.objectUser` に限定する。
 - docs 公開 SA には、対象 bucket にだけ `roles/storage.objectAdmin` と `roles/storage.legacyBucketReader` を付与する。後者は `gcloud storage rsync` に必要な bucket metadata 読取り用である。
 - Cloud Run runtime SA には、対象 bucket の `roles/storage.objectViewer` だけを付与する。
 

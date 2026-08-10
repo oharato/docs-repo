@@ -4,7 +4,7 @@
 
 - WIF の IAM Condition を使う state bucket では Uniform bucket-level access が必須です。
 - PR plan 用 SA は `terraform/state/docs-hub/` の prefix にだけアクセスできます。
-- state を操作する個人管理者には必要な期間だけ object access を付与し、作業後に見直します。
+- state を操作する個人管理者には `terraform/state/bootstrap/` prefix だけに `roles/storage.objectUser` を条件付きで付与します。`roles/storage.objectAdmin` は不要です。
 
 ## WIF と GitHub Actions
 
