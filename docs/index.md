@@ -17,8 +17,8 @@
 
 1. ローカル環境でドキュメントの編集・プレビューを行います。
    ```bash
-   pip install mkdocs-material
-   mkdocs serve
+   uv sync --frozen
+   uv run mkdocs serve
    ```
 2. 変更をコミットし、`main` ブランチへ Pull Request を作成・マージします。
 3. GitHub Actions が自動で立ち上がり、ビルドおよび GCS 同期処理を実行します。
