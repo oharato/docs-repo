@@ -1,6 +1,6 @@
-# Docs Repository (Markdownコンテンツ・自動デプロイ)
+# Docs Repository (Markdownコンテンツ・GitHub Pages自動デプロイ)
 
-本リポジトリは、社内ドキュメントのソースコード (Markdown) と MkDocs 設定、および GCS への自動同期用 GitHub Actions ワークフローを管理します。
+本リポジトリは、ドキュメントのソースコード (Markdown) と MkDocs 設定、および GitHub Pages への自動デプロイ用 GitHub Actions ワークフローを管理します。
 
 ---
 
@@ -10,7 +10,7 @@
 docs-repo/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml          # WIF 認証による GCS 同期 CI/CD ワークフロー
+│       └── deploy.yml          # GitHub Pages 自動デプロイ CI/CD ワークフロー
 ├── docs/                        # Markdownドキュメント群
 │   ├── index.md                # メインページ
 │   ├── architecture.md         # システム構成解説
@@ -44,23 +44,11 @@ uv run mkdocs serve
 
 ---
 
-## 🔐 GitHub Secrets 設定手順
+## 🚀 GitHub Pages 設定・デプロイ仕様
 
-本リポジトリの Actions を正常に動作させるため、GitHub リポジトリの **Settings > Secrets and variables > Actions** にて以下の Secrets を設定してください。
-
-※ WIF の値は `infra-terraform/bootstrap`、バケット名はルートスタックの output から取得できます。
-
-| Secret 名 | 説明 | 取得元 (Terraform Output) |
-| :--- | :--- | :--- |
-| `GCP_WORKLOAD_IDENTITY_PROVIDER` | docs 公開専用 WIF Provider のリソース名 | `docs_workload_identity_provider` |
-| `GCP_SERVICE_ACCOUNT` | docs 公開専用 SA メールアドレス | `docs_service_account_email` |
-| `GCS_BUCKET` | ドキュメント同期先の GCS バケット名 | `gcs_bucket_name` |
-
----
-
-## 🚀 デプロイ仕様
-
-- `main` ブランチへのコミット Push 時にワークフローが自動トリガーされます。
-- GitHub サービス認証は **Workload Identity Federation (WIF)** を利用し、短時間有効な OIDC アクセストークンを自動取得します（サービスアカウントキー JSON の発行は不要）。
-- docs 公開用 SA は `docs-repo` の `main` と `deploy.yml` にだけ信頼条件を限定し、対象 bucket にだけ同期権限を持ちます。
-- `mkdocs build` により生成された `site/` ディレクトリ配下のファイル群を、`gcloud storage rsync --recursive --delete-unmatched-destination-objects` コマンドで GCS バケットへ差分同期します。
+1. **GitHub リポジトリ設定**:
+   - リポジトリの **Settings > Pages** を開きます。
+   - **Build and deployment > Source** で `GitHub Actions` を選択します。
+2. **自動デプロイ**:
+   - `main` ブランチへのコミット Push 時にワークフロー (`.github/workflows/deploy.yml`) が自動実行されます。
+   - `uv.lock` による依存関係インストール、生 HTML インデックス自動抽出 (`scripts/generate_html_index.py`)、`mkdocs build --strict` を実行後、`actions/deploy-pages` 経由で GitHub Pages へ公開されます。

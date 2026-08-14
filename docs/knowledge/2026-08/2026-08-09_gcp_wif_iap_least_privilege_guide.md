@@ -90,3 +90,56 @@ cd ..
 terraform init
 terraform apply
 ```
+
+---
+
+## 6. Cloud Load Balancing 課金メカニズムとコスト削減・$0/月化手法 (2026-08-14 追記)
+
+### 課金発生の原因
+Cloud Load Balancing (External Application Load Balancer) は、リクエストやトラフィックが存在しない場合でも **Forwarding Rule (転送ルール) が存在するだけで固定維持費が発生** します（最初の 5 転送ルールまで約 $0.025/時間 ≒ 日額約 $0.60 / 月額約 $18〜$25）。
+
+### カスタムドメイン廃止の影響
+カスタムドメイン設定（`domain_name`）を解除するだけでは、HTTP リダイレクト用 Forwarding Rule やグローバル IP、バックエンドサービスが維持されるため、日額の固定課金は止まりません。
+
+### コスト削減・廃止の選択肢比較
+
+| アプローチ | 費用 | 構成変更 | 認証・アクセス制御 |
+| --- | --- | --- | --- |
+| **A. Cloud Run 直アクセス + NGINX Basic 認証** | **完全 $0/月** (従量・無料枠) | GCLB / IAP を完全廃止。<br>Cloud Run の Ingress を `allUsers` 許可。 | NGINX の `default.conf` に `auth_basic` を設定。 |
+| **B. Cloud Run 直アクセス + Cloudflare Access** | **完全 $0/月** (Free Plan) | GCLB / IAP を完全廃止。<br>Cloudflare Access 経由で配信。 | Google / GitHub などの SSO 認証を Cloudflare 上で設定。 |
+| **C. オンデマンド運用 (`terraform destroy`)** | 稼働時間のみ日割り | 不要時は `terraform destroy` でインフラ削除。 | 現行の IAP + GCLB 構成をそのまま維持。 |
+
+---
+
+## 7. GCP リソース完全クリーンアップ手順 (2026-08-14 追記)
+
+学習・検証完了後にすべての課金を確実に停止するためのリソース削除手順です。
+
+### 方法 1: GCP プロジェクト全体を削除（推奨・確実）
+プロジェクト（`try-gcp-504903`）自体が不要になった場合は、プロジェクトをシャットダウンすることで、すべてのリソース・GCSバケット・ネットワーク・WIFが即座に削除され、将来の誤課金リスクを完全排除できます。
+
+```bash
+gcloud projects delete try-gcp-504903
+```
+
+### 方法 2: Terraform で特定リソースのみ順次削除
+GCP プロジェクト自体を残し、インフラリソースのみを削除する場合：
+
+```bash
+# 1. State バケットへの一時権限付与（IAM Condition 制限回避）
+gcloud storage buckets add-iam-policy-binding gs://try-gcp-504903-tfstate \
+  --member="user:<YOUR_EMAIL>" \
+  --role="roles/storage.objectAdmin"
+
+# 2. ルートスタックの削除 (Cloud Run, LB, GCS, IAM)
+cd infra-terraform
+terraform destroy
+
+# 3. Bootstrap スタックの削除 (WIF Pools, Service Accounts)
+cd bootstrap
+terraform destroy
+
+# 4. State バケットの削除
+gcloud storage buckets delete gs://try-gcp-504903-tfstate
+```
+

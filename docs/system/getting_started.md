@@ -49,3 +49,35 @@ cd docs-repo
 uv sync --frozen
 uv run mkdocs serve
 ```
+
+## リソースの削除・クリーンアップ（課金停止）
+
+学習や検証が完了し、GCP リソースの維持課金を止める場合は以下のいずれかを実施します。
+
+### アプローチ 1: GCP プロジェクト全体のシャットダウン（推奨）
+プロジェクト自体が不要な場合は、プロジェクトを削除することで全リソースを一括削除し課金を完全停止できます。
+
+```bash
+gcloud projects delete <YOUR_PROJECT_ID>
+```
+
+### アプローチ 2: Terraform による段階的リソース削除 (`terraform destroy`)
+プロジェクトを残し、Terraform リソースのみを削除する場合：
+
+```bash
+# 1. State バケットへの一時権限付与（IAM Condition 制限回避）
+gcloud storage buckets add-iam-policy-binding gs://<YOUR_STATE_BUCKET> \
+  --member="user:<YOUR_EMAIL>" \
+  --role="roles/storage.objectAdmin"
+
+# 2. ルートインフラの削除
+cd infra-terraform
+terraform destroy
+
+# 3. Bootstrap インフラの削除
+cd bootstrap
+terraform destroy
+
+# 4. State バケットの削除
+gcloud storage buckets delete gs://<YOUR_STATE_BUCKET>
+```

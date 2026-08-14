@@ -21,3 +21,11 @@
 
 - docs SA には対象 bucket の `roles/storage.objectAdmin` と `roles/storage.legacyBucketReader` が必要です。前者は同期、後者は `gcloud storage rsync` の bucket metadata 読取りに使います。
 - 依存は `uv.lock` で固定し、CI とローカルで `uv sync --frozen` を使います。
+
+## Cloud Load Balancing (GCLB) コスト・課金に関する注意点
+
+- **転送ルール (Forwarding Rule) の日額課金**: GCLB はアクセス（トラフィック）がゼロであっても、Forwarding Rule が存在するだけで維持基本料金（約 $0.025/時 ≒ 日額約 $0.60・月額約 $18〜$25）が発生します。
+- **カスタムドメイン削除だけでは課金は止まらない**: カスタムドメインを削除しても HTTP Forwarding Rule や LB リソースが残るため基本料金は継続発生します。
+- **コスト $0 化の選択肢**:
+  1. LB を完全廃止し、Cloud Run 直アクセス（`min_instance_count = 0`）+ NGINX Basic 認証または Cloudflare Access (Free Plan) を併用する。
+  2. 使用しない期間は `terraform destroy` でインフラを削除する。
