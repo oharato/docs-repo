@@ -66,6 +66,18 @@ extra_javascript:
 nav:
   - ホーム: index.md
   - アーキテクチャ概要: architecture.md
+  - NuxtHub (Nuxt 4 + Cloudflare):
+      - アーキテクチャ & ディレクトリ構成入門: nuxthub/architecture_guide.md
+      - 開発チュートリアル & 実践ガイド: nuxthub/tutorial.md
+      - 暗号化Cookie認証・セッション設計: nuxthub/auth_guide.md
+      - CraftCommerce 実装振り返り: nuxthub/implementation_report.md
+      - CI/CD 最適化・高速化: nuxthub/ci_optimization.md
+  - Modern Rails (Rails 8 + Solid Trio):
+      - アーキテクチャ & ディレクトリ構成入門: modern_rails/architecture_guide.md
+      - 本番デプロイ完全ガイド (Kamal 2): modern_rails/deployment_guide.md
+      - CraftCommerce 実装振り返り: modern_rails/implementation_report.md
+      - パフォーマンス & デプロイ最適化: modern_rails/performance_optimization.md
+      - Cloudflare HTTPS 設定: modern_rails/cloudflare_https_setup.md
   - システム仕様・運用:
       - プロジェクト概要・セットアップ: system/getting_started.md
       - 詳細システム設計仕様: system/architecture_spec.md
