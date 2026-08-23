@@ -15,13 +15,15 @@
 
 ```mermaid
 quadrantChart
-    title アーキテクチャ特性マッピング
-    x-axis ◄ 単一ノード自己完結型 (Single Node) -------- 完全サーバーレス・エッジ分散型 (Serverless Edge) ►
-    y-axis ◄ フロントエンド主導 (TypeScript/SPA/SSE) -------- 業務ロジック・ORM主導 (Ruby/ActiveRecord) ►
-    quadrant-1 従来型エンタープライズ
-    quadrant-2 Modern Rails (Rails 8 + Solid Trio)
-    quadrant-3 クラシックSPA
-    quadrant-4 NuxtHub (Nuxt 4 + Cloudflare Native)
+    title "アーキテクチャ特性マッピング"
+    x-axis "単一ノード自己完結 (Single Node)" --> "完全サーバーレス・エッジ分散 (Serverless Edge)"
+    y-axis "フロントエンド主導 (TypeScript / UI)" --> "業務ロジック・ORM主導 (Ruby / ActiveRecord)"
+    quadrant-1 "グローバル高可用性"
+    quadrant-2 "Modern Rails (堅牢モノリス)"
+    quadrant-3 "クラシックSPA"
+    quadrant-4 "NuxtHub (エッジ・サーバーレス)"
+    "Modern Rails (Rails 8)": [0.20, 0.85]
+    "NuxtHub (Nuxt 4)": [0.85, 0.20]
 ```
 
 ### 📊 6軸比較スコアカード (5点満点)
