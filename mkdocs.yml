@@ -78,6 +78,8 @@ nav:
           - 分析ダッシュボード概要: html/analytics/dashboard.html
   - 技術ナレッジ (Knowledge):
       - 2026年08月:
+          - CraftCommerce 技術比較・評価レポート (NuxtHub vs Rails 8): knowledge/2026-08/2026-08-23_craft_commerce_nuxthub_vs_rails8_comparison_report.md
+          - CraftCommerce 統合EC設計・仕様書: knowledge/2026-08/2026-08-23_craft_commerce_specification.md
           - GCP WIF & IAP 最小権限設定ガイド: knowledge/2026-08/2026-08-09_gcp_wif_iap_least_privilege_guide.md
           - Mermaid ダイアグラム自動検証・リンターガイド: knowledge/2026-08/2026-08-09_mermaid_linter_and_validation_guide.md
           - Better Auth + Cloudflare + Hono ガイド: knowledge/2026-08/2026-08-05_better_auth_cloudflare_hono_guide.md
