@@ -89,6 +89,9 @@ nav:
       - analytics:
           - 分析ダッシュボード概要: html/analytics/dashboard.html
   - 技術ナレッジ (Knowledge):
+      - 2026年09月:
+          - Claude Code Routine 機能徹底解説 (APIトリガー・GitHub連携・ToS): knowledge/2026-09/2026-09-02_claude_code_routine_api_trigger_guide.md
+          - AIエージェントセキュリティとローカルサンドボックス化ガイド: knowledge/2026-09/2026-09-01_ai_agent_security_and_sandboxing_guide.md
       - 2026年08月:
           - CraftCommerce 技術比較・評価レポート (NuxtHub vs Rails 8): knowledge/2026-08/2026-08-23_craft_commerce_nuxthub_vs_rails8_comparison_report.md
           - CraftCommerce 統合EC設計・仕様書: knowledge/2026-08/2026-08-23_craft_commerce_specification.md
